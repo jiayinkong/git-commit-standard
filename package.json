@@ -8,6 +8,12 @@
       "path": "node_modules/cz-customizable"
     }
   },
+  "lint-staged": {
+    "src/**/*.{js,vue}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
   "scripts": {
     "dev": "vite",
     "lint": "eslint --fix --ext .ts,.vue src",
