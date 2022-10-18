@@ -7,11 +7,6 @@
 - 结合git hooks 钩子，不符合约定式提交规范的时候，能阻止当前提交，抛出错误提示，或者自动修复格式化问题，保证上库代码是统一格式
 - husky + commitlint 检查代码是否符合规范要求
 
-完成一次规范的代码提交，需要经历如图所示的过程：
-![git commit procedures](./img/git_commit/commit_procedure.png)
-
-以下是一个亲测有效的例子供大家参考，有问题也可以随时交流。
-
 ## 制定代码提交规范
 目前最为广泛使用的是以 Angular 团队规范延伸出的 Conventional Commits specification（约定式提交）。[具体了解 onventional Commits specification](https://www.conventionalcommits.org/zh-hans/v1.0.0/) 
 
