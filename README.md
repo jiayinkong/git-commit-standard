@@ -1,23 +1,23 @@
-## git commit 提交规范
+# git commit 规范
 
 在项目中实现 git commit 规范，可以带来以下好处：
 - 结合 Eslint+Prettier 做代码格式化
 - 把杂乱无章的代码提交信息约定成有统一的格式，这种格式还可以根据团队的需要，自行制定
 - 使用 Commitizen 代码提交规范工具，能减少 git commit 信息描述的麻烦
-- 结合git hooks 钩子，不符合约定式提交规范的时候，能阻止当前提交，抛出错误提示
+- 结合git hooks 钩子，不符合约定式提交规范的时候，能阻止当前提交，抛出错误提示，或者自动修复格式化问题，保证上库代码是统一格式
 - husky + commitlint 检查代码是否符合规范要求
-- lint-staged 自动修复格式错误，只检查本次修改更新的代码，在出现代码格式错误时，自动修复并且推送
 
 完成一次规范的代码提交，需要经历如图所示的过程：
+![git commit procedures](./img/git_commit/commit_procedure.png)
 
-以下有个简略的初始项目，有对 git commit 规范感兴趣的可以基于这个搭建好了的简单项目实现一遍，也可以直接在自己的项目中安装相关依赖实现。但无论如何，重点是如何在项目中实现 git commit 的规范，以下是一个亲测有效的例子供大家参考，有问题也可以随时交流。
+以下是一个亲测有效的例子供大家参考，有问题也可以随时交流。
 
-### 制定代码提交规范
-目前最为广泛使用的是以 Angular 团队规范延伸出的 Conventional Commits specification（约定式提交） 。
+## 制定代码提交规范
+目前最为广泛使用的是以 Angular 团队规范延伸出的 Conventional Commits specification（约定式提交）。[具体了解 onventional Commits specification](https://www.conventionalcommits.org/zh-hans/v1.0.0/) 
 
 其格式遵循以下规范：
 
-```
+```shell
 <type>[optional scope]: <description>
 
 [optional body]
@@ -31,12 +31,12 @@
 接下来需要做以下几件事
 
 1. 安装 cz-customizable
-```
+```shell
 pnpm i cz-customizable@6.3.0 -D
 ```
 
 2. 配置 `package.json`
-```
+```json
 {
     "config": {
         "commitizen": {
@@ -84,51 +84,55 @@ module.exports = {
 这部分内容可以根据团队的需要，自行制定规范内容。
 
 4. 全局安装 Commitizen
+
 `npm i commitizen@4.2.4 -g`
 
 Commitizen 是一个代码提交规范工具，在终端输入 `git cz` 代替 `git commit -m`
 
 在 windows 的 git base 可能会有问题，但可以直接在 vsCode 打开终端，输入 `git cz` 这样就可以根据刚才配置的 `.cz-config.js` 给出输入提示，我们可以根据提示快速完成 commit 的描述提交。
 
-### git hooks + husky + commitlint
+![git cz](./img/git_commit/git_cz.png)
+
+## git hooks + husky + commitlint
 通过以上的 Commitizen + cz-customizable 我们已经制定好了代码提交规范，但是还存在这样的问题，如果有人不小心使用 `git commit -m` 这样代码还是可以提交的，那有没有办法实现当不符合提交规范的时候阻止提交呢？有的，通过使用 git hooks 就可以做到。
 
-#### git hooks
+### git hooks
 git hooks 也叫 git 钩子、git 回调方法， git 在执行某个事件之前或之后进行一些其他额外的操作。
 
-https://git-scm.com/docs/githooks
+[了解gitHooks](https://git-scm.com/docs/githooks)
+
 
 用得最多的是 `pre-commit`、`commit-msg`。
 
-`commit-msg` 可用于将消息规范化为某个项目标准格式，还可用于在检查消息文件后拒绝提交。
+- `commit-msg` 可用于将消息规范化为某个项目标准格式，还可用于在检查消息文件后拒绝提交。
 
-`pre-commit` 不接受任何参数，在获取提交日志消息并进行提交之前被调用，脚本 `git commit` 以非零状态退出会导致命令在创建提交之前终止。
+- `pre-commit` 不接受任何参数，在获取提交日志消息并进行提交之前被调用，脚本 `git commit` 以非零状态退出会导致命令在创建提交之前终止。
 
-绕过 `pre-commit`、`commit-msg` 使用命令：
-```
+绕过 `pre-commit`、`commit-msg` 可使用命令：
+```shell
 git commit --no-verify
 ```
 
-#### husky
+### husky
 `husky` 是 git hooks 工具。使用 `husky` 需要做以下几件事
 
 1. 安装 husky
-```
+```shell
 npm install husky@7.0.1 --save-dev
 ```
 
 2. 添加 `husky` 脚本到 `package.json`
-```
+```shell
 npm set-script prepare "husky install"
 ```
 
 3. 启动 hooks，生成 `.husky` 文件夹
-```
+```shell
 pnpm prepare
 ```
 
 4. 安装 commitlint 相关依赖
-```
+```shell
 pnpm install --save-dev @commitlint/config-conventional@12.1.4 @commitlint/cli@12.1.4
 ```
 
@@ -162,21 +166,11 @@ module.exports = {
 }
 ```
 
-PS: commitlint 默认配置参考[https://github.com/conventional-changelog/commitlint/blob/master/@commitlint/config-conventional/index.js]
+[commitlint 默认配置参考](https://github.com/conventional-changelog/commitlint/blob/master/@commitlint/config-conventional/index.js)
 
 4. 添加生命周期钩子
 
-pre-commit
-```
-npx husky add .husky/pre-commit "pnpm lint"
-```
+- pre-commit
 
-终端输入 `git commit -m 'update'` 查看是否生效
-
-
-添加 `commitlint` 的 hooks 到 husky
-```
-npx husky add .husky/commit-msg 'npx --no-install commitlint --edit "$1"'
-```
-
-终端输入 `git commit -m 'update'` 查看是否生效
+```shell
+npx husky add .husky/pre-commit "pnpm lint && pnp
