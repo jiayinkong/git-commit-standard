@@ -173,4 +173,30 @@ module.exports = {
 - pre-commit
 
 ```shell
-npx husky add .husky/pre-commit "pnpm lint && pnp
+npx husky add .husky/pre-commit "pnpm lint && pnpm format"
+```
+
+终端输入 `git commit -m 'update'` 查看是否生效:
+
+![pre commit](./img/git_commit/pre_commit_eslint.png)
+
+
+- commit-msg
+
+```shell
+# 添加 commitlint 的 hooks 到 husky
+npx husky add .husky/commit-msg 'npx --no-install commitlint --edit "$1"'
+```
+
+终端输入 `git commit -m 'update'` 查看是否生效
+
+![commit msg](./img/git_commit/commit_msg.png)
+
+接着试下成功提交的效果：
+
+```shell
+git add .
+git cz
+```
+
+![commit success](./img/git_commit/commit_success.png)
