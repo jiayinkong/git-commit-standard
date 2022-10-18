@@ -1,1 +1,2 @@
-# git-commit-standard
+## git commit 提交规范
+> 
